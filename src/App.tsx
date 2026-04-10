@@ -11,6 +11,7 @@ import PYQs from "@/pages/PYQs";
 import MockTests from "@/pages/MockTests";
 import Videos from "@/pages/Videos";
 import About from "@/pages/About";
+import ReviewMode from "@/pages/ReviewMode";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/mocks" element={<MockTests />} />
             <Route path="/videos" element={<Videos />} />
             <Route path="/about" element={<About />} />
+            <Route path="/review" element={<ReviewMode />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
