@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { sampleLRDISets } from "@/data/questions";
+import { sampleLRDISets, pyqLRDISets } from "@/data/questions";
 import QuestionCard from "@/components/QuestionCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Timer, RotateCcw, ChevronRight } from "lucide-react";
+
+const allSets = [...sampleLRDISets, ...pyqLRDISets];
 
 export default function LRDISets() {
   const [activeSet, setActiveSet] = useState<string | null>(null);
@@ -17,7 +19,7 @@ export default function LRDISets() {
   }, [timerOn]);
 
   const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
-  const currentSet = sampleLRDISets.find((s) => s.id === activeSet);
+  const currentSet = allSets.find((s) => s.id === activeSet);
 
   if (currentSet) {
     return (
@@ -36,6 +38,12 @@ export default function LRDISets() {
             )}
           </div>
         </div>
+        {currentSet.paper && (
+          <div className="flex gap-2 mb-4">
+            <Badge variant="outline">{currentSet.paper}</Badge>
+            {currentSet.topic && <Badge variant="secondary">{currentSet.topic}</Badge>}
+          </div>
+        )}
         <div className="bg-muted rounded-xl p-6 mb-8 whitespace-pre-line text-sm leading-relaxed">
           {currentSet.passage}
         </div>
@@ -51,9 +59,9 @@ export default function LRDISets() {
   return (
     <div className="container py-10">
       <h1 className="font-heading text-3xl font-bold mb-2">LRDI Sets</h1>
-      <p className="text-muted-foreground mb-8">Full case-based sets simulating the CAT LRDI section</p>
+      <p className="text-muted-foreground mb-8">Full case-based sets simulating the CAT LRDI section — {allSets.length} sets available</p>
       <div className="grid gap-4">
-        {sampleLRDISets.map((set) => (
+        {allSets.map((set) => (
           <button
             key={set.id}
             onClick={() => setActiveSet(set.id)}
@@ -62,7 +70,9 @@ export default function LRDISets() {
             <div>
               <h3 className="font-heading font-semibold text-lg">{set.title}</h3>
               <div className="flex gap-2 mt-2">
+                {set.paper && <Badge variant="outline">{set.paper}</Badge>}
                 <Badge variant="outline">{set.questions.length} questions</Badge>
+                {set.topic && <Badge variant="secondary">{set.topic}</Badge>}
                 <Badge variant="outline" className="capitalize">{set.difficulty}</Badge>
               </div>
             </div>
