@@ -25,9 +25,17 @@ export default function QuestionCard({ question, index }: { question: Question; 
           {question.year && <Badge variant="secondary">CAT {question.year}</Badge>}
         </div>
       </div>
+      {question.passage && (
+        <div className="bg-muted rounded-lg p-4 mb-4 text-sm leading-relaxed whitespace-pre-line max-h-48 overflow-y-auto">
+          {question.passage}
+        </div>
+      )}
 
       <p className="font-medium mb-4 leading-relaxed">{question.question}</p>
 
+      {question.is_tita && question.options.length === 0 ? (
+        <p className="text-sm text-muted-foreground italic mb-4">TITA (Type In The Answer) — No options provided</p>
+      ) : (
       <div className="grid gap-2 mb-4">
         {question.options.map((opt, i) => {
           let cls = "border rounded-lg px-4 py-3 text-sm cursor-pointer transition-all text-left w-full ";
