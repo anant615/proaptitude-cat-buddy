@@ -55,6 +55,8 @@ export default function QuestionCard({ question, index }: { question: Question; 
           );
         })}
       </div>
+      )}
+
 
       {answered && (
         <div>
