@@ -9,6 +9,9 @@ export interface Question {
   options: string[];
   correctAnswer: number;
   solution: string;
+  paper?: string;
+  is_tita?: boolean;
+  passage?: string;
 }
 
 export interface LRDISet {
@@ -16,8 +19,16 @@ export interface LRDISet {
   title: string;
   passage: string;
   difficulty: "easy" | "medium" | "hard";
+  year?: number;
+  paper?: string;
+  topic?: string;
   questions: Question[];
 }
+
+import pyqData from "./pyq_data.json";
+
+export const pyqQuestions: Question[] = pyqData.questions as Question[];
+export const pyqLRDISets: LRDISet[] = pyqData.lrdiSets as LRDISet[];
 
 export const sampleQuestions: Question[] = [
   {

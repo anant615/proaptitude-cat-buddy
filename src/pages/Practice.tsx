@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { sampleQuestions } from "@/data/questions";
+import { sampleQuestions, pyqQuestions } from "@/data/questions";
 import QuestionCard from "@/components/QuestionCard";
 import { Button } from "@/components/ui/button";
 import { Timer, RotateCcw } from "lucide-react";
+
+const allQuestions = [...sampleQuestions, ...pyqQuestions];
 
 const categories = [
   { value: "all", label: "All" },
@@ -27,7 +29,7 @@ export default function Practice() {
     return () => clearInterval(interval);
   }, [timerOn]);
 
-  const filtered = sampleQuestions.filter((q) => {
+  const filtered = allQuestions.filter((q) => {
     if (category !== "all" && q.category !== category) return false;
     if (difficulty !== "all" && q.difficulty !== difficulty) return false;
     return true;
@@ -39,18 +41,13 @@ export default function Practice() {
     <div className="container py-10">
       <div className="mb-8">
         <h1 className="font-heading text-3xl font-bold mb-2">Practice Questions</h1>
-        <p className="text-muted-foreground">Topic-wise CAT questions with detailed solutions</p>
+        <p className="text-muted-foreground">Topic-wise CAT questions with detailed solutions — {allQuestions.length} questions available</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3 mb-8">
         <div className="flex gap-1 flex-wrap">
           {categories.map((c) => (
-            <Button
-              key={c.value}
-              variant={category === c.value ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCategory(c.value)}
-            >
+            <Button key={c.value} variant={category === c.value ? "default" : "outline"} size="sm" onClick={() => setCategory(c.value)}>
               {c.label}
             </Button>
           ))}
@@ -58,13 +55,7 @@ export default function Practice() {
         <div className="h-6 w-px bg-border hidden sm:block" />
         <div className="flex gap-1 flex-wrap">
           {difficulties.map((d) => (
-            <Button
-              key={d}
-              variant={difficulty === d ? "default" : "outline"}
-              size="sm"
-              onClick={() => setDifficulty(d)}
-              className="capitalize"
-            >
+            <Button key={d} variant={difficulty === d ? "default" : "outline"} size="sm" onClick={() => setDifficulty(d)} className="capitalize">
               {d}
             </Button>
           ))}
