@@ -1,33 +1,41 @@
 import { useState } from "react";
-import { quantTopics, learningPath } from "@/data/quant_videos";
+import { quantTopics, learningPath, type TopicSection } from "@/data/quant_videos";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Play, ExternalLink, Calculator, Triangle, Hash, Sigma, Shuffle, ChevronRight, GraduationCap, Variable,
+  Play, ExternalLink, Calculator, Triangle, Hash, Sigma, Shuffle,
+  ArrowLeft, GraduationCap, Variable, Sparkles, BookOpen,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ReactNode> = {
-  Calculator: <Calculator className="h-5 w-5" />,
-  Variable: <Variable className="h-5 w-5" />,
-  Triangle: <Triangle className="h-5 w-5" />,
-  Hash: <Hash className="h-5 w-5" />,
-  Sigma: <Sigma className="h-5 w-5" />,
-  Shuffle: <Shuffle className="h-5 w-5" />,
+  Calculator: <Calculator className="h-6 w-6" />,
+  Variable: <Variable className="h-6 w-6" />,
+  Triangle: <Triangle className="h-6 w-6" />,
+  Hash: <Hash className="h-6 w-6" />,
+  Sigma: <Sigma className="h-6 w-6" />,
+  Shuffle: <Shuffle className="h-6 w-6" />,
 };
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.5 } }),
+const iconMapSm: Record<string, React.ReactNode> = {
+  Calculator: <Calculator className="h-4 w-4" />,
+  Variable: <Variable className="h-4 w-4" />,
+  Triangle: <Triangle className="h-4 w-4" />,
+  Hash: <Hash className="h-4 w-4" />,
+  Sigma: <Sigma className="h-4 w-4" />,
+  Shuffle: <Shuffle className="h-4 w-4" />,
 };
 
 export default function Videos() {
+  const [selectedTopic, setSelectedTopic] = useState<TopicSection | null>(null);
   const [playing, setPlaying] = useState<string | null>(null);
 
+  const recommendedTopic = quantTopics.find((t) => t.recommended);
+
   return (
-    <div className="container py-10 max-w-6xl">
+    <div className="container py-10 max-w-6xl min-h-[80vh]">
       {/* Hero */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
         <Badge variant="secondary" className="mb-3 gap-1.5">
           <GraduationCap className="h-3.5 w-3.5" /> Quant Preparation
         </Badge>
@@ -35,118 +43,184 @@ export default function Videos() {
           Master Quant with <span className="text-gradient-gold">Concept Videos</span>
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          Learn concepts topic-wise with the best explanations
+          Select a topic below to start learning step-by-step
         </p>
       </motion.div>
 
-      {/* Learning Path */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="rounded-xl border bg-card p-5 md:p-6 mb-14"
-      >
-        <h2 className="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
-          <GraduationCap className="h-5 w-5 text-accent" /> Start Your Learning Path
-        </h2>
-        <div className="flex flex-wrap items-center gap-2">
-          {learningPath.map((s, i) => (
-            <a key={s.step} href={`#${s.topic.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`} className="flex items-center gap-2 group">
-              <div className="flex items-center gap-1.5 rounded-full border bg-secondary/60 px-3 py-1.5 text-sm font-medium transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
-                <span className="text-xs text-muted-foreground">{s.step}</span>
-                <span>{s.topic}</span>
+      <AnimatePresence mode="wait">
+        {!selectedTopic ? (
+          /* ───── TOPIC SELECTION VIEW ───── */
+          <motion.div
+            key="topics"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Recommended */}
+            {recommendedTopic && (
+              <div className="mb-8 rounded-xl border border-accent/30 bg-accent/5 p-4 flex items-center gap-3 flex-wrap">
+                <Sparkles className="h-5 w-5 text-accent shrink-0" />
+                <span className="text-sm font-medium">
+                  Start with <span className="text-accent font-semibold">{recommendedTopic.topic}</span> — recommended for beginners
+                </span>
+                <Button size="sm" className="ml-auto gap-1.5" onClick={() => { setSelectedTopic(recommendedTopic); setPlaying(null); }}>
+                  <BookOpen className="h-3.5 w-3.5" /> Start Learning
+                </Button>
               </div>
-              {i < learningPath.length - 1 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-            </a>
-          ))}
-        </div>
-      </motion.div>
+            )}
 
-      {/* Topic Sections */}
-      {quantTopics.map((topic, ti) => (
-        <motion.section
-          key={topic.id}
-          id={topic.id}
-          custom={ti}
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="mb-14"
-        >
-          <div className="flex items-center gap-3 mb-1">
-            <div className="h-9 w-9 rounded-lg bg-accent/15 flex items-center justify-center text-accent">
-              {iconMap[topic.icon]}
+            {/* Learning path */}
+            <div className="rounded-xl border bg-card p-5 mb-8">
+              <h2 className="font-heading text-sm font-semibold mb-3 flex items-center gap-2 text-muted-foreground uppercase tracking-wide">
+                <GraduationCap className="h-4 w-4" /> Recommended Order
+              </h2>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {learningPath.map((s, i) => (
+                  <span key={s.step} className="flex items-center gap-1.5">
+                    <span className="rounded-full border bg-secondary/60 px-3 py-1 text-xs font-medium">
+                      {s.step}. {s.topic}
+                    </span>
+                    {i < learningPath.length - 1 && <span className="text-muted-foreground text-xs">→</span>}
+                  </span>
+                ))}
+              </div>
             </div>
-            <h2 className="font-heading text-xl font-bold">{topic.topic}</h2>
-          </div>
-          <p className="text-muted-foreground text-sm mb-5 ml-12">{topic.description}</p>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {topic.videos.map((v) => {
-              const isPlaying = playing === v.id;
-              return (
-                <div
-                  key={v.id}
-                  className="group rounded-xl border bg-card overflow-hidden card-hover flex flex-col"
+            {/* Topic cards grid */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {quantTopics.map((topic, i) => (
+                <motion.button
+                  key={topic.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.4 }}
+                  onClick={() => { setSelectedTopic(topic); setPlaying(null); }}
+                  className="group relative rounded-xl border bg-card p-6 text-left transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  {/* Thumbnail / Player */}
-                  <div className="aspect-video relative bg-muted overflow-hidden">
-                    {isPlaying ? (
-                      <iframe
-                        src={`https://www.youtube.com/embed/${v.youtubeId}?autoplay=1`}
-                        allow="autoplay; encrypted-media"
-                        allowFullScreen
-                        className="absolute inset-0 w-full h-full"
-                      />
-                    ) : (
-                      <>
-                        <img
-                          src={`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`}
-                          alt={v.title}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        <button
-                          onClick={() => setPlaying(v.id)}
-                          className="absolute inset-0 flex items-center justify-center bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <div className="h-14 w-14 rounded-full bg-accent flex items-center justify-center shadow-lg">
-                            <Play className="h-6 w-6 text-accent-foreground ml-0.5" />
-                          </div>
-                        </button>
-                        <Badge className="absolute top-2 right-2 bg-foreground/70 text-background text-xs border-0">
-                          {v.duration}
-                        </Badge>
-                      </>
-                    )}
+                  {topic.recommended && (
+                    <Badge className="absolute top-3 right-3 bg-accent/15 text-accent border-accent/30 text-[10px]">
+                      <Sparkles className="h-3 w-3 mr-0.5" /> Start Here
+                    </Badge>
+                  )}
+                  <div className="h-11 w-11 rounded-lg bg-accent/10 flex items-center justify-center text-accent mb-4 transition-colors group-hover:bg-accent/20">
+                    {iconMap[topic.icon]}
                   </div>
+                  <h3 className="font-heading font-bold text-lg mb-1">{topic.topic}</h3>
+                  <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{topic.description}</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Play className="h-3 w-3" />
+                    <span>{topic.videos.length} videos</span>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        ) : (
+          /* ───── TOPIC DETAIL VIEW ───── */
+          <motion.div
+            key={selectedTopic.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Back + topic header */}
+            <div className="flex items-center gap-3 mb-6">
+              <Button variant="ghost" size="sm" onClick={() => { setSelectedTopic(null); setPlaying(null); }} className="gap-1.5">
+                <ArrowLeft className="h-4 w-4" /> Back to Topics
+              </Button>
+            </div>
 
-                  {/* Info */}
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-medium text-sm leading-snug mb-1.5 line-clamp-2">{v.title}</h3>
-                    <p className="text-xs text-muted-foreground mb-3">{v.creator}</p>
-                    <div className="mt-auto flex gap-2">
-                      <Button size="sm" className="flex-1 gap-1.5" onClick={() => setPlaying(isPlaying ? null : v.id)}>
-                        <Play className="h-3.5 w-3.5" /> {isPlaying ? "Close" : "Watch Now"}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        asChild
-                      >
-                        <a href={`https://www.youtube.com/watch?v=${v.youtubeId}`} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      </Button>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-10 w-10 rounded-lg bg-accent/15 flex items-center justify-center text-accent">
+                {iconMap[selectedTopic.icon]}
+              </div>
+              <div>
+                <h2 className="font-heading text-2xl font-bold">{selectedTopic.topic}</h2>
+                <p className="text-muted-foreground text-sm">{selectedTopic.description}</p>
+              </div>
+            </div>
+
+            {/* Other topics quick-switch */}
+            <div className="flex flex-wrap gap-2 mt-4 mb-8">
+              {quantTopics.filter((t) => t.id !== selectedTopic.id).map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => { setSelectedTopic(t); setPlaying(null); }}
+                  className="flex items-center gap-1.5 rounded-full border bg-secondary/40 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-accent/15 hover:text-accent hover:border-accent/30"
+                >
+                  {iconMapSm[t.icon]} {t.topic}
+                </button>
+              ))}
+            </div>
+
+            {/* Video grid */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {selectedTopic.videos.map((v, i) => {
+                const isPlaying = playing === v.id;
+                return (
+                  <motion.div
+                    key={v.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.04, duration: 0.35 }}
+                    className="group rounded-xl border bg-card overflow-hidden transition-shadow duration-300 hover:shadow-lg hover:shadow-accent/5 flex flex-col"
+                  >
+                    {/* Thumbnail / Player */}
+                    <div className="aspect-video relative bg-muted overflow-hidden">
+                      {isPlaying ? (
+                        <iframe
+                          src={`https://www.youtube.com/embed/${v.youtubeId}?autoplay=1`}
+                          allow="autoplay; encrypted-media"
+                          allowFullScreen
+                          className="absolute inset-0 w-full h-full"
+                        />
+                      ) : (
+                        <>
+                          <img
+                            src={`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`}
+                            alt={v.title}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                          <button
+                            onClick={() => setPlaying(v.id)}
+                            className="absolute inset-0 flex items-center justify-center bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <div className="h-12 w-12 rounded-full bg-accent flex items-center justify-center shadow-lg">
+                              <Play className="h-5 w-5 text-accent-foreground ml-0.5" />
+                            </div>
+                          </button>
+                          <Badge className="absolute top-2 right-2 bg-foreground/70 text-background text-xs border-0">
+                            {v.duration}
+                          </Badge>
+                        </>
+                      )}
                     </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </motion.section>
-      ))}
+
+                    {/* Info */}
+                    <div className="p-4 flex flex-col flex-1">
+                      <h3 className="font-medium text-sm leading-snug mb-1 line-clamp-2">{v.title}</h3>
+                      <p className="text-xs text-muted-foreground mb-3">{v.creator}</p>
+                      <div className="mt-auto flex gap-2">
+                        <Button size="sm" className="flex-1 gap-1.5" onClick={() => setPlaying(isPlaying ? null : v.id)}>
+                          <Play className="h-3.5 w-3.5" /> {isPlaying ? "Close" : "Watch"}
+                        </Button>
+                        <Button size="sm" variant="outline" asChild>
+                          <a href={`https://www.youtube.com/watch?v=${v.youtubeId}`} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
