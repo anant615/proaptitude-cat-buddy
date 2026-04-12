@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Brain, MessageSquareText, Clock, Trophy, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { videoLibrary } from "@/data/questions";
+import { quantTopics } from "@/data/quant_videos";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -104,7 +104,7 @@ export default function Home() {
           <Link to="/videos" className="text-accent text-sm font-medium hover:underline">View all →</Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {videoLibrary.slice(0, 4).map((v) => (
+          {quantTopics.slice(0, 4).flatMap(t => t.videos.slice(0, 1)).map((v) => (
             <div key={v.id} className="rounded-lg border bg-card overflow-hidden card-hover">
               <div className="aspect-video bg-muted flex items-center justify-center">
                 <Youtube className="h-10 w-10 text-muted-foreground/40" />
