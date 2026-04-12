@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Brain, MessageSquareText, Clock, Trophy, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { videoLibrary } from "@/data/questions";
+import { quantTopics } from "@/data/quant_videos";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
