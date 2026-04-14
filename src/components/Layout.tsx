@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/practice", label: "Practice" },
-  { to: "/lrdi", label: "LRDI Sets" },
+  { to: "/dpp", label: "DPP" },
   { to: "/pyqs", label: "PYQs" },
   { to: "/mocks", label: "Mock Tests" },
   { to: "/videos", label: "Videos" },
+  { to: "/resources", label: "Resources" },
+  { to: "/newspaper", label: "Newspaper" },
   { to: "/about", label: "About" },
 ];
 
