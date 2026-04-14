@@ -12,6 +12,9 @@ import MockTests from "@/pages/MockTests";
 import Videos from "@/pages/Videos";
 import About from "@/pages/About";
 import ReviewMode from "@/pages/ReviewMode";
+import DPP from "@/pages/DPP";
+import Resources from "@/pages/Resources";
+import NewspaperPage from "@/pages/Newspaper";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +35,9 @@ const App = () => (
             <Route path="/videos" element={<Videos />} />
             <Route path="/about" element={<About />} />
             <Route path="/review" element={<ReviewMode />} />
+            <Route path="/dpp" element={<DPP />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/newspaper" element={<NewspaperPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
